@@ -9,7 +9,6 @@ import AdaptiveMenu from './AdaptiveMenu';
 import MenuIcon from '../../icons/MenuIcon';
 import CloseMenuIcon from '../../icons/CloseMenuIcon';
 import { selectProfile } from '../../../features/profile/profileSlice';
-// import { Paper } from '../../ui';
 import Search from './Search';
 import ArrowAvatar from '../../icons/ArrowAvatar';
 import HelpIcon from '../../icons/HelpIcon';
@@ -101,6 +100,18 @@ export const Header = () => {
     setOpenMenuProfile(!openMenuProfile);
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (openMenuProfile && !event.path.includes(ref.current)) {
+        setOpenMenuProfile(!openMenuProfile);
+      }
+    };
+    document.body.addEventListener('click', handleClickOutside);
+    return () => {
+      document.body.removeEventListener('click', handleClickOutside);
+    };
+  }, [setOpenMenuProfile, openMenuProfile]);
+
   // todo: рефакторить
   const iconMenuAndClose = !mobileMenu ? <MenuIcon /> : <CloseMenuIcon />;
 
@@ -139,7 +150,7 @@ export const Header = () => {
                   </Link>
                 </div>
                 <div>
-                  <Popover placement="bottom" trigger="click" content={PopoverContent}>
+                  <Popover placement="bottomRight" open={openMenuProfile} content={PopoverContent}>
                     <StyledAvatar onClick={handleOpenMenuProfile} ref={ref} className="d-md-flex">
                       <img className="m-auto" src={profile.avatar?.thumbnail} alt="" />
                       <div className={openMenuProfile ? 'downArrow' : 'upArrow'}>
